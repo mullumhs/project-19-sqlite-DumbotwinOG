@@ -1,30 +1,210 @@
 import sqlite3
 
-# Create a connection to a new database (or connect to an existing one)
-conn = sqlite3.connect('movies.db')
-
-# Create a cursor object
-cursor = conn.cursor()
-
-# Select all movies
 
 
-cursor.execute('SELECT * FROM movies')
-all_movies = cursor.fetchall()
-print("All movies:")
-for movie in all_movies:
-    print(movie)
+def create_connection():
+    """Create a connection to the my_movie_collection.db SQLite database."""
+    try:
+        conn = sqlite3.connect("my_movie_collection.db")
+        return conn
+    except sqlite3.Error as e:
+        print(f"Error connecting to database: {e}")
+        return None
 
 
 
+def create_table(conn):
+
+        
+
+    cursor = conn.cursor()
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS movies (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        title TEXT NOT NULL,
+        director TEXT,
+        year INTEGER,
+        rating FLOAT )
+    ''')
+
+    # Commit the changes and close the connection
+
+    conn.commit()
+    pass
 
 
-cursor.execute('SELECT AVG(rating) FROM movies')
-avg_rating = cursor.fetchone()[0]
-print(f"\nAverage rating: {avg_rating:.2f}")
 
-# Commit the changes and close the connection
-conn.commit()
+def add_movie(conn, title, director, year, rating):
 
-# Don't forget to close the connection when you're done!
-conn.close()
+    
+
+    cursor = conn.cursor()
+    movie = ('The Godfather', 'Francis Ford Coppola', 1972, 9.2)
+    cursor.execute(f'''
+    INSERT INTO movies (title, director, year, rating)
+    VALUES ('{movie[0]}', '{movie[1]}', {movie[2]}, {movie[3]})
+    ''')
+    pass
+
+
+
+def display_all_movies(conn):
+
+    cursor = conn.cursor()
+
+    cursor.execute('SELECT * FROM movies')
+
+    updated_movies = cursor.fetchall()
+
+    print("Updated movie list:")
+
+    for movie in updated_movies:
+
+        print(movie)
+
+    pass
+
+
+
+def update_movie_rating(conn, title, new_rating):
+
+    
+    
+    cursor = conn.cursor()
+
+    cursor.execute('''
+    UPDATE movies
+    SET rating = 9.0
+    WHERE title = 'Inception'
+    ''')
+
+    pass
+
+
+
+def delete_movie(conn, title):
+    cursor = conn.cursor()
+
+    cursor.execute('DELETE FROM movies WHERE rating < 8.5')
+    
+    pass
+
+
+
+def find_movies_by_director(conn, director):
+
+    # TODO: Find and display all movies by a specific director
+
+    pass
+
+
+
+def main():
+
+    conn = create_connection()
+
+    if conn is not None:
+
+        create_table(conn)
+
+        
+
+        while True:
+
+            print("\n--- Movie Database Manager ---")
+
+            print("1. Add a new movie")
+
+            print("2. Display all movies")
+
+            print("3. Update a movie's rating")
+
+            print("4. Delete a movie")
+
+            print("5. Find movies by director")
+
+            print("6. Exit")
+
+            
+
+            choice = input("Enter your choice (1-6): ")
+
+            
+
+            if choice == '1':
+
+                title = input("Enter movie title: ")
+
+                director = input("Enter director name: ")
+
+                year = int(input("Enter release year: "))
+
+                rating = float(input("Enter rating (0-10): "))
+
+                add_movie(conn, title, director, year, rating)
+
+                print("Movie added successfully!")
+
+            
+
+            elif choice == '2':
+
+                display_all_movies(conn)
+
+            
+
+            elif choice == '3':
+
+                title = input("Enter movie title to update: ")
+
+                new_rating = float(input("Enter new rating (0-10): "))
+
+                update_movie_rating(conn, title, new_rating)
+
+                print("Rating updated successfully!")
+
+            
+
+            elif choice == '4':
+
+                title = input("Enter movie title to delete: ")
+
+                delete_movie(conn, title)
+
+                print("Movie deleted successfully!")
+
+            
+
+            elif choice == '5':
+
+                director = input("Enter director name: ")
+
+                find_movies_by_director(conn, director)
+
+            
+
+            elif choice == '6':
+
+                print("Thank you for using Movie Database Manager. Goodbye!")
+
+                break
+
+            
+
+            else:
+
+                print("Invalid choice. Please try again.")
+
+        
+
+        conn.close()
+
+    else:
+
+        print("Error! Cannot create the database connection.")
+
+
+
+if __name__ == '__main__':
+
+    main()
