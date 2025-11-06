@@ -58,11 +58,28 @@ def search_movies():
 
     # The % symbol is a wildcard character that matches zero or more characters 
 
-    movies = conn.execute('Your SQL query here', ('%' + query + '%',)).fetchall()
+    movies = conn.execute(
+    'SELECT * FROM movies WHERE title LIKE ?',
+    ('%' + query + '%',)
+).fetchall()
 
     conn.close()
 
     return render_template('search.html', movies=movies, query=query)
+
+
+
+@app.route('/delete/<int:movie_id>', methods=['POST'])
+def delete_movie(movie_id):
+    conn = get_db_connection()
+    conn.execute('DELETE FROM movies WHERE id = ?', (movie_id,))
+    conn.commit()
+    conn.close()
+    return redirect(url_for('index'))  # or wherever your movie list lives
+
+
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
