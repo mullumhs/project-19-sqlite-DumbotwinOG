@@ -49,20 +49,14 @@ def add_movie(conn, title, director, year, rating):
 
 
 def display_all_movies(conn):
-
-    cursor = conn.cursor()
-
-    cursor.execute('SELECT * FROM movies')
-
-    updated_movies = cursor.fetchall()
-
-    print("Updated movie list:")
-
-    for movie in updated_movies:
-
+    cursor = conn.cursor()    
+    # Select all movies from the movies table
+    cursor.execute("SELECT * FROM movies")
+    movies = cursor.fetchall()    
+    # Display each movie
+    for movie in movies:
         print(movie)
 
-    pass
 
 
 
